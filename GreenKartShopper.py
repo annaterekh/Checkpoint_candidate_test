@@ -3,18 +3,26 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# Explicit wait - waiting for a specific condition like an element is available. 
+# Implicit wait - waiting for a specified time without any condition.
+
+# Explicit wait should be used when there is an element that it takes more time to load it, 
+# implicit wait is used when it takes time for all elements on page to load
+
 class GreenKartShopper:
 
     def setUp(self):
         
         self.browser = webdriver.Chrome()
+
+        #I'm using implicit wait here to give time for the whole page to load
         self.browser.implicitly_wait(10)
+
         self.browser.get("https://rahulshettyacademy.com/seleniumPractise/#/")
         
     def finishShopping(self):
         
         self.browser.quit()    
-
 
     def goToCart(self):
         cart_icon = self.browser.find_element(By.CLASS_NAME, 'cart-icon')
@@ -30,8 +38,8 @@ class GreenKartShopper:
                      
         promo_button = self.browser.find_element(By.CLASS_NAME, 'promoBtn')
         promo_button.click()
-        
-        #assert "Code applied..!" in self.browser.page_source
+
+        #Explicit wait is used here - wait until string Code applied is shown meaning discount was applied successfully        
         WebDriverWait(self.browser, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'promoInfo')))
     
     def searchAndAddToCart(self, name, number):
@@ -47,9 +55,9 @@ class GreenKartShopper:
                 stepper_input.find_element(By.CLASS_NAME, 'quantity').clear()
                 stepper_input.find_element(By.CLASS_NAME, 'quantity').send_keys(number)
 
-                #get the button
+                #get the button and click
                 add_button = product.find_element(By.CLASS_NAME, 'product-action')
-                add_button.click()    
+                add_button.click()   
 
                 return True    
 
@@ -63,6 +71,7 @@ class GreenKartShopper:
                     
         self.goToCart()
         self.applyDiscount(promoCode)
+
 
 shopper = GreenKartShopper()
 shopper.setUp()
